@@ -9,16 +9,15 @@ namespace App\Ticker;
 
 
 use App\Url;
-use GuzzleHttp\Client;
 
 class Ticker
 {
-    private ?string $ticker;
-    private ?string $dateFrom;
-    private ?string $dateTo;
-    private $data;
-    private string $tickerUrl = 'https://www.quandl.com/api/v3/datasets/WIKI/';
-    private string $outputFormat = 'json';
+    private $ticker;
+    private $dateFrom;
+    private $dateTo;
+    private $dataset;
+    private $tickerUrl = 'https://www.quandl.com/api/v3/datasets/WIKI/';
+    private $outputFormat = 'json';
 
 
     public function __construct(?string $ticker = null)
@@ -47,31 +46,12 @@ class Ticker
     }
 
     /**
-     * @param array $data
-     */
-    public function fill(array $data): void
-    {
-        $this->ticker ??= $data['ticker'];
-        $this->dateFrom ??= $data['date_from'];
-        $this->dateTo ??= $data['date_to'];
-    }
-
-    /**
-     * @param $name
-     * @return string
-     */
-    public function getData($name): ?string
-    {
-        return $this->{$name} ?? null;
-    }
-
-    /**
      * @param TickerDataInterface $tickerData
      * @return array|string
      */
     public function render(TickerDataInterface $tickerData)
     {
-        return $tickerData->toRender($this->data()['column_names'], $this->data()['data']);
+        return $tickerData->toRender($this->dataset()['column_names'], $this->dataset()['data']);
     }
 
     /**
@@ -89,12 +69,12 @@ class Ticker
     /**
      * @return array
      */
-    public function data(): array
+    public function dataset(): array
     {
-        if (!$this->data) {
+        if (!$this->dataset) {
             $endpoint = $this->tickerUrl . $this->ticker . '.' . $this->outputFormat;
 
-            $this->data = (new Url($endpoint))
+            $this->dataset = (new Url($endpoint))
                 ->params([
                     'api_key' => env('QUANDL_API_KEY'),
                     'start_date' => $this->dateFrom ?? null,
@@ -103,7 +83,7 @@ class Ticker
                 ->getArray();
         }
 
-        return $this->data['dataset'];
+        return $this->dataset['dataset'] ?? [];
     }
 
     /**
@@ -111,7 +91,7 @@ class Ticker
      */
     public function getName()
     {
-        return $this->data()['name'];
+        return $this->dataset()['name'] ?? null;
     }
 
 

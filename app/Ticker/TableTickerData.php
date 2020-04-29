@@ -7,9 +7,6 @@
 
 namespace App\Ticker;
 
-
-use Illuminate\Support\Collection;
-
 class TableTickerData extends TickerData
 {
 

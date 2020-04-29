@@ -22,12 +22,13 @@ class IndexController extends Controller
      */
     public function index(Request $request)
     {
+        $table = $chart = null;
         $ticker = (new Ticker($request->old('ticker')))
             ->dateFrom($request->old('date_from'))
             ->dateTo($request->old('date_to'));
 
-        $table = $chart = null;
-        if ($request->old('ticker')) {
+
+        if (!session()->has('errors') && $request->old('ticker')) {
             $table = $ticker->render(new TableTickerData());
             $chart = $ticker->render(new ChartTickerData());
         }

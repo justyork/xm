@@ -14,7 +14,7 @@ class TickerEmail extends Mailable
     /**
      * @var Ticker
      */
-    private Ticker $ticker;
+    private $ticker;
 
     /**
      * Create a new message instance.
